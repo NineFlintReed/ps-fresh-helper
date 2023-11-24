@@ -18,6 +18,11 @@ function Get-FreshAsset {
         [Parameter(ParameterSetName='UserId',ValueFromPipelineByPropertyName)]
         [String]$UserId,
 
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName='Search')]
+        [String]$Search,
+
         [Switch]$IncludeTypeFields
     )
 
@@ -33,6 +38,7 @@ function Get-FreshAsset {
             'AssetTag'  { $params.Body['filter'] = '"asset_tag:{0}"' -f "'$AssetTag'" }
             'UserId'    { $params.Body['filter'] = '"user_id:{0}"' -f "$UserId"       }
             'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"     }
+            'Search'    { $params.Body['search'] = '"name:{0}"' -f "'$Search'"        }
             'All'       { }
         }
 
