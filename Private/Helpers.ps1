@@ -1,4 +1,5 @@
 
+
 function params_to_query_string {
     Param(
         $Body
@@ -47,7 +48,6 @@ function params_to_query_string {
 }
 
 
-
 function fresh_get {
     Param(
         $Endpoint,
@@ -73,5 +73,31 @@ function fresh_get {
     }
 
     Write-Debug "$($params.Method) $($params.Uri)"
+    Invoke-WebRequest @params
+}
+
+
+function fresh_put {
+    Param(
+        $Endpoint,
+        $Body
+    )
+
+    $uri = [UriBuilder]::new($env:FRESHSERVICE_ROOT)
+    $uri.Path = $Endpoint
+
+    $params = @{
+        Method = 'PUT'
+        Uri = $uri.ToString()
+        SkipHttpErrorCheck = $true
+        Body = $Body | ConvertTo-Json -Depth 4
+        ContentType = 'application/json'
+        Headers = @{
+            Authorization = $env:FRESHSERVICE_AUTH
+            Accept = 'application/json'
+        }
+    }
+
+    Write-Debug "$($params.Method) $($params.Uri) $($params.Body)"
     Invoke-WebRequest @params
 }
