@@ -14,6 +14,7 @@
     
     FunctionsToExport = @(
         'Get-FreshAsset'
+        'Set-FreshAsset'
         'Get-FreshUser'
         'Invoke-FreshRequest'
     )
