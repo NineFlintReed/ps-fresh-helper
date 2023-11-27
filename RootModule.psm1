@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop' # Stop|Inquire|Continue|Suspend|SilentlyContinue
 
 
 . "$PSScriptRoot/Private/Helpers.ps1"
-
+. "$PSScriptRoot/Private/fresh_cache.ps1"
 
 (Get-ChildItem "$PSScriptRoot/Commands").ForEach({. "$_"})
 
