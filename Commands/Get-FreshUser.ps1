@@ -37,23 +37,18 @@ function Get-FreshUser {
             }
         }
 
-        &{
-            if($PSCmdlet.ParameterSetName -eq 'User') {
-                $result = Invoke-FreshRequest @params |
-                Select-Object -ExpandProperty 'requester*'
-                if(-not $result) {
-                    Write-Error -Message "User email '$User' not found." -ErrorAction 'Stop' -Category ObjectNotFound
-                } else {
-                    $result
-                }
+        
+        if($PSCmdlet.ParameterSetName -eq 'User') {
+            $result = Invoke-FreshRequest @params |
+            Select-Object -ExpandProperty 'requester*'
+            if(-not $result) {
+                Write-Error -Message "User email '$User' not found." -ErrorAction 'Stop' -Category ObjectNotFound
             } else {
-                Invoke-FreshRequest @params |
-                Select-Object -ExpandProperty 'requester*'
+                $result
             }
-        } |
-        ForEach-Object {
-            $FreshCache[$_.primary_email] = $_.id
-            $_
+        } else {
+            Invoke-FreshRequest @params |
+            Select-Object -ExpandProperty 'requester*'
         }
     }
 }
