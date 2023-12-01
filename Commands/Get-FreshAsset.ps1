@@ -22,6 +22,11 @@ function Get-FreshAsset {
         [Parameter(ParameterSetName='Search')]
         [String]$Search,
 
+        [Alias('location_id')]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName='Location')]
+        $Location,
+
         [Switch]$IncludeTypeFields,
 
         [Int]$WorkspaceId
@@ -41,11 +46,13 @@ function Get-FreshAsset {
                 $params.Body['filter'] = switch($User) {
                     {$_ -as [Int64]}       { '"user_id:{0}"' -f (Get-FreshUser -User $_).id }
                     {$_ -as [MailAddress]} { '"user_id:{0}"' -f (user_email_to_id $User)    }
-                }             
+                }   
             }
-            'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"     }
-            'Search'    { $params.Body['search'] = '"name:{0}"' -f "'$Search'"        }
+            'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"       }
+            'Location'  { $params.Body['filter'] = '"location_id:{0}"' -f "$Location" }
+            'Search'    { $params.Body['search'] = '"name:{0}"' -f "'$Search'"          }
             'All'       { }
+            default { throw }
         }
 
         if($IncludeTypeFields) {
