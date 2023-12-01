@@ -18,6 +18,8 @@
         'Get-FreshUser'
         'Invoke-FreshRequest'
         'Add-FreshTask'
+        'Get-FreshLocation'
+        'Get-FreshLocationHierarchy'
     )
     CmdletsToExport = @()
     VariablesToExport = '*'
