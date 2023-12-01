@@ -1,5 +1,5 @@
 $global:FreshCache = [PSCustomObject]@{
-    #Locations = [Collections.Generic.Dictionary[String, Int64]]::new()
+    #Locations = [Collections.Generic.Dictionary[String, [Int64[]]]]::new()
     #Departments = [Collections.Generic.Dictionary[String, Int64]]::new()
     #Groups = [Collections.Generic.Dictionary[String, Int64]]::new()
     Requesters = [Collections.Generic.Dictionary[MailAddress, Int64]]::new()
