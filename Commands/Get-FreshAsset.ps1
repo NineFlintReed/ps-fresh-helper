@@ -16,7 +16,7 @@ function Get-FreshAsset {
         [Alias('user_id')]
         [ValidateNotNullOrEmpty()]
         [Parameter(ParameterSetName='UserId',ValueFromPipelineByPropertyName)]
-        [String]$UserId,
+        [String]$User,
 
 
         [ValidateNotNullOrEmpty()]
@@ -36,7 +36,12 @@ function Get-FreshAsset {
         switch($PSCmdlet.ParameterSetName) {
             'DisplayId' { $params.Endpoint += "/$DisplayId"                           }
             'AssetTag'  { $params.Body['filter'] = '"asset_tag:{0}"' -f "'$AssetTag'" }
-            'UserId'    { $params.Body['filter'] = '"user_id:{0}"' -f "$UserId"       }
+            'UserId' {
+                $params.Body['filter'] = switch($User) {
+                    {$_ -as [Int64]}       { '"user_id:{0}"' -f "$_"                     }
+                    {$_ -as [MailAddress]} { '"user_id:{0}"' -f (user_email_to_id $User) }
+                }             
+            }
             'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"     }
             'Search'    { $params.Body['search'] = '"name:{0}"' -f "'$Search'"        }
             'All'       { }

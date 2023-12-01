@@ -13,21 +13,11 @@ Add-Member -MemberType ScriptMethod -Name Clear -Value {
     $this.Requesters.Clear()
 }
 
-$FreshCache |
-Add-Member -MemberType ScriptMethod -Name GetRequesterId -Value {
-    Param([Parameter(Mandatory)][MailAddress]$RequesterEmail)
-    if($this.Requesters.ContainsKey($RequesterEmail)) {
-        return $this.Requesters[$RequesterEmail]
+function user_email_to_id {
+    Param($email)
+    if($FreshCache.Requesters.ContainsKey($email)) {
+        $FreshCache.Requesters[$email]
     } else {
-        $user_obj = Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/requesters" -Body @{
-            include_agents='true'
-            email = $RequesterEmail
-        } | Select-Object -ExpandProperty 'requesters'
-
-        if(-not $user_obj) {
-            Write-Error -ErrorAction Stop "Unable to find requester with email '$RequesterEmail'"
-        }
-        $this.Requesters[$user_obj.primary_email] = $user_obj.id
-        return $this.Requesters[$RequesterEmail]
+        (Get-FreshUser -User $email).id
     }
 }
