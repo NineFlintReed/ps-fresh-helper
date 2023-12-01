@@ -4,7 +4,13 @@ function Get-FreshLocation {
         [Alias('location_id')]
         [ValidateNotNullOrEmpty()]
         [Parameter(ParameterSetName='Location',ValueFromPipelineByPropertyName)]
-        $Location
+        [Int64]$Location,
+
+        [Parameter(ParameterSetName='Location')]
+        [Switch]$IncludeChildren,
+
+        [Parameter(ParameterSetName='RootLocationsOnly')]
+        [Switch]$RootLocationsOnly
     )
 
     process {
@@ -15,21 +21,45 @@ function Get-FreshLocation {
         }
 
         switch($PSCmdlet.ParameterSetName) {
-            'Location' {
-                switch($Location) {
-                    {$_ -as [Int64]} {
-                        $params.Endpoint += "/$Location"
-                        break
-                    }
-                    default {
-                        throw "Invalid parameter 'Location': '$Location' must be an id or name."
-                    }
-                }
-            }
             'All' {
                 $params.Body['per_page'] = 100
+                Invoke-FreshRequest @params | Select-Object -ExpandProperty 'location*'
+            }
+            'RootLocationsOnly' {
+                $params.Body['per_page'] = 100
+                Invoke-FreshRequest @params | Select-Object -ExpandProperty 'location*' |
+                Where-Object {
+                    $null -eq $_.parent_location_id
+                }
+            }
+            'Location' {
+                if($IncludeChildren) {
+                    $params.Body['per_page'] = 100
+                    $location_listing = (Invoke-FreshRequest @params).locations
+                    $root = $location_listing.Where({$_.id -eq $Location})
+                    if(-not $root) {
+                        throw "No location found with id '$Location'"
+                    }
+
+                    $todo = [System.Collections.Generic.Stack[Object]]::new()
+                    $todo.Push($root)
+
+                    while ($todo.Count -gt 0) {
+                        $current = $todo.Pop()
+                        $location_listing |
+                        Where-Object {
+                            $_.parent_location_id -eq $current.id
+                        } |
+                        ForEach-Object {
+                            $todo.Push($_)
+                        }
+                        $current
+                    }
+                } else {
+                    $params.Endpoint += "/$Location"
+                    Invoke-FreshRequest @params | Select-Object -ExpandProperty 'location*'
+                }
             }
         }
-        Invoke-FreshRequest @params | Select-Object -ExpandProperty 'location*'
     }
 }
