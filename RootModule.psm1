@@ -17,9 +17,6 @@ Set-Alias -Name fresh -Value Invoke-FreshRequest -Force
 
 
 
-
-
-
 #&{
 #$pattern = @"
 #(?sx)

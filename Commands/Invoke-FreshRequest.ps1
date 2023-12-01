@@ -2,7 +2,7 @@
 function Invoke-FreshRequest {
     [CmdletBinding()]
     Param(
-    [ValidateSet('GET','PUT')]
+    [ValidateSet('GET','PUT','POST')]
     [Parameter(Position=0,Mandatory)]
     [String]$Method,
 
@@ -17,6 +17,7 @@ function Invoke-FreshRequest {
     $script = switch($Method) {
         'GET'    { ${Function:fresh_get}      }
         'PUT'    { ${Function:fresh_put}      }
+        'POST'   { ${Function:fresh_post}     }
         default  { throw 'unsupported method' }
     }
 

@@ -101,3 +101,36 @@ function fresh_put {
     Write-Debug "$($params.Method) $($params.Uri) $($params.Body)"
     Invoke-WebRequest @params
 }
+
+
+function fresh_post {
+    Param(
+        $Endpoint,
+        $Body
+    )
+
+    $uri = [UriBuilder]::new($env:FRESHSERVICE_ROOT)
+    $uri.Path = $Endpoint
+
+    $params = @{
+        Method = 'POST'
+        Uri = $uri.ToString()
+        SkipHttpErrorCheck = $true
+        Body = $Body | ConvertTo-Json -Depth 4
+        ContentType = 'application/json'
+        Headers = @{
+            Authorization = $env:FRESHSERVICE_AUTH
+            Accept = 'application/json'
+        }
+    }
+
+    Write-Debug "$($params.Method) $($params.Uri) $($params.Body)"
+    Invoke-WebRequest @params
+}
+
+
+
+
+
+
+

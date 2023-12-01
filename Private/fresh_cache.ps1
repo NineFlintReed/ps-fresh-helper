@@ -1,4 +1,4 @@
-$script:FreshCache = [PSCustomObject]@{
+$global:FreshCache = [PSCustomObject]@{
     #Locations = [Collections.Generic.Dictionary[String, Int64]]::new()
     #Departments = [Collections.Generic.Dictionary[String, Int64]]::new()
     #Groups = [Collections.Generic.Dictionary[String, Int64]]::new()

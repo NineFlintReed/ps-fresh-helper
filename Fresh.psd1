@@ -17,6 +17,7 @@
         'Set-FreshAsset'
         'Get-FreshUser'
         'Invoke-FreshRequest'
+        'Add-FreshTask'
     )
     CmdletsToExport = @()
     VariablesToExport = '*'
