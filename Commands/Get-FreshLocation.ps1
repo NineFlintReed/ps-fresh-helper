@@ -14,16 +14,11 @@ function Get-FreshLocation {
             Body = @{ }
         }
 
-        
         switch($PSCmdlet.ParameterSetName) {
             'Location' {
                 switch($Location) {
                     {$_ -as [Int64]} {
                         $params.Endpoint += "/$Location"
-                        break
-                    }
-                    {$_ -is [String]} {
-                        $params.Body['query'] = "name:'$Location'"
                         break
                     }
                     default {
@@ -35,8 +30,6 @@ function Get-FreshLocation {
                 $params.Body['per_page'] = 100
             }
         }
-
-        Invoke-FreshRequest @params |
-        Select-Object -ExpandProperty 'location*'
+        Invoke-FreshRequest @params | Select-Object -ExpandProperty 'location*'
     }
 }
