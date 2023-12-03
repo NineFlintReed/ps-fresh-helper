@@ -18,6 +18,10 @@ function user_email_to_id {
     if($FreshCache.Requesters.ContainsKey($email)) {
         $FreshCache.Requesters[$email]
     } else {
-        (Get-FreshUser -User $email).id
+        $user = Get-FreshUser -User $email
+        if($user) {
+            $FreshCache.Requesters[$user.primary_email] = $user.id
+            $FreshCache.Requesters[$user.primary_email]
+        }
     }
 }

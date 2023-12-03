@@ -16,10 +16,11 @@
         'Get-FreshAsset'
         'Set-FreshAsset'
         'Get-FreshUser'
+        'Get-FreshTicket'
         'Invoke-FreshRequest'
         'Add-FreshTask'
         'Get-FreshLocation'
-        'Get-FreshLocationHierarchy'
+        #'Get-FreshLocationHierarchy'
     )
     CmdletsToExport = @()
     VariablesToExport = '*'
