@@ -67,7 +67,7 @@ function fresh_get {
         Uri = $uri.ToString()
         SkipHttpErrorCheck = $true
         Headers = @{
-            Authorization = $env:FRESHSERVICE_AUTH
+            Authorization = "Basic ${env:FRESHSERVICE_AUTH}"
             Accept = 'application/json'
         }
     }
@@ -93,7 +93,7 @@ function fresh_put {
         Body = $Body | ConvertTo-Json -Depth 4
         ContentType = 'application/json'
         Headers = @{
-            Authorization = $env:FRESHSERVICE_AUTH
+            Authorization = "Basic ${env:FRESHSERVICE_AUTH}"
             Accept = 'application/json'
         }
     }
@@ -119,7 +119,7 @@ function fresh_post {
         Body = $Body | ConvertTo-Json -Depth 4
         ContentType = 'application/json'
         Headers = @{
-            Authorization = $env:FRESHSERVICE_AUTH
+            Authorization = "Basic ${env:FRESHSERVICE_AUTH}"
             Accept = 'application/json'
         }
     }
