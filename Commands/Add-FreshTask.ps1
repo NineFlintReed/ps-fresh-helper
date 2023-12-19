@@ -15,6 +15,7 @@ function Add-FreshTask {
         [ValidateSet('Open','InProgress','Completed')]
         [String]$Status,
         
+        [Alias('group_id')]
         $Group,
 
         $DueDate
@@ -32,6 +33,7 @@ function Add-FreshTask {
                 'Completed'  { 3 }
                 default      { 1 }
             }
+            group_id = $Group
         }
     }
 
