@@ -11,10 +11,8 @@ function Add-FreshTask {
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory)]
         [String]$Description,
-        
 
         [ValidateSet('Open','InProgress','Completed')]
-        [Parameter(Mandatory)]
         [String]$Status,
         
         $Group,
@@ -32,6 +30,7 @@ function Add-FreshTask {
                 'Open'       { 1 }
                 'InProgress' { 2 }
                 'Completed'  { 3 }
+                default      { 1 }
             }
         }
     }
