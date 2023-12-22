@@ -89,23 +89,21 @@ function Get-FreshUser {
     
     switch($PSCmdlet.ParameterSetName) {
         'User' {
-            if($UseCache) {
-                $result = $FreshCache.GetUser($User)
-                if(-not $result) {
-                    $result = switch($User) {
-                        {$_ -as [Uint64]} {
-                            Get-FreshUser_ViaId $User
-                        }
-                        {$_ -as [MailAddress]} {
-                            Get-FreshUser_ViaEmail $User
-                        }
-                        default {
-                            Write-Error "'$($User.GetType())' invalid for param 'User'. Must use either ID or email" -ErrorAction Stop -Category InvalidArgument
-                        }
+            if($UseCache -and $FreshCache.GetUser($User)) {
+                $FreshCache.GetUser($User)
+            } else {
+                switch($User) {
+                    {$_ -as [Uint64]} {
+                        Get-FreshUser_ViaId $User
+                    }
+                    {$_ -as [MailAddress]} {
+                        Get-FreshUser_ViaEmail $User
+                    }
+                    default {
+                        Write-Error "'$($User.GetType())' invalid for param 'User'. Must use either ID or email" -ErrorAction Stop -Category InvalidArgument
                     }
                 }
             }
-            $result
         }
         'Search' {
             Get-FreshUser_Search $Search
