@@ -3,15 +3,19 @@ Set-Variable -Name 'FreshCache' -Scope Global -Value ([PSCustomObject]@{
         FromId = @{}
         FromMail = @{}
     }
+    AssetType = [PSCustomObject]@{
+        FromId = @{}
+        FromName = @{}
+    }
 })
 
-$global:FreshCache | Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
+$global:FreshCache |
+Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
     Param($user)
     $this.User.FromId[$user.id] = $user
     $this.User.FromMail[$user.primary_email] = $user
-}
-
-$global:FreshCache | Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
+} -PassThru |
+Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
     Param($user)
     if($user -as [Uint64]) {
         $this.User.FromId[$user]
@@ -19,6 +23,3 @@ $global:FreshCache | Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value 
         $this.User.FromMail[$user]
     }
 }
-
-
-
