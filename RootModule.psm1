@@ -9,6 +9,8 @@ $ErrorActionPreference = 'Stop' # Stop|Inquire|Continue|Suspend|SilentlyContinue
 
 (Get-ChildItem "$PSScriptRoot/Commands").ForEach({. "$_"})
 
+Initialize-FreshCache
+
 Set-Alias -Name fresh -Value Invoke-FreshRequest -Force
 
 

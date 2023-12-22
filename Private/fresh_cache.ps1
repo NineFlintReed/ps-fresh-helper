@@ -13,21 +13,21 @@ Set-Variable -Name 'FreshCache' -Scope Global -Value ([PSCustomObject]@{
     }
 })
 
-
 # preloading some parts of the cache for use with autocomplete etc
-
-Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
-Select-Object -ExpandProperty 'asset_types' |
-ForEach-Object {
-    $FreshCache.AssetType.FromId[$_.id] = $_
-    $FreshCache.AssetType.FromName[$_.name] = $_
-}
-
-Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/workspaces" |
-Select-Object -ExpandProperty 'workspaces' |
-ForEach-Object {
-    $FreshCache.Workspace.FromId[$_.id] = $_
-    $FreshCache.Workspace.FromName[$_.name] = $_
+function Initialize-FreshCache {
+    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
+    Select-Object -ExpandProperty 'asset_types' |
+    ForEach-Object {
+        $FreshCache.AssetType.FromId[$_.id.ToString()] = $_
+        $FreshCache.AssetType.FromName[$_.name.ToString()] = $_
+    }
+    
+    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/workspaces" |
+    Select-Object -ExpandProperty 'workspaces' |
+    ForEach-Object {
+        $FreshCache.Workspace.FromId[$_.id.ToString()] = $_
+        $FreshCache.Workspace.FromName[$_.name.ToString()] = $_
+    }
 }
 
 
@@ -35,14 +35,14 @@ ForEach-Object {
 
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
-    Param($user)
-    $this.User.FromId[$user.id] = $user
+    Param([String]$user)
+    $this.User.FromId[$user.id.ToString()] = $user
     $this.User.FromMail[$user.primary_email] = $user
 }
 
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
-    Param($user)
+    Param([String]$user)
     if($user -as [Uint64]) {
         $this.User.FromId[$user]
     } elseif($user -as [MailAddress]) {
@@ -52,7 +52,7 @@ Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
 
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'GetAssetType' -Value {
-    Param($assettype)
+    Param([String]$assettype)
     if($assettype -as [Uint64]) {
         $this.AssetType.FromId[$assettype]
     } elseif($user -as [String]) {
@@ -62,10 +62,10 @@ Add-Member -MemberType ScriptMethod -Name 'GetAssetType' -Value {
 
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'GetWorkspace' -Value {
-    Param($workspace)
+    Param([String]$workspace)
     if($workspace -as [Uint64]) {
         $this.Workspace.FromId[$workspace]
-    } elseif($user -as [String]) {
+    } elseif($workspace -as [String]) {
         $this.Workspace.FromName[$workspace]
     }
 }

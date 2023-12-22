@@ -4,7 +4,9 @@ function Get-FreshAssetType {
     Param(
         [Parameter(ParameterSetName='Single')]
         [ValidateNotNullOrEmpty()]
-        $AssetType
+        $AssetType,
+
+        [Switch]$IncludeHidden
     )
 
     switch($PSCmdlet.ParameterSetName) {
@@ -17,7 +19,11 @@ function Get-FreshAssetType {
             }
         }
         'All' {
-            $FreshCache.AssetType.FromId.Values
+            if($IncludeHidden) {
+                $FreshCache.AssetType.FromId.Values
+            } else {
+                $FreshCache.AssetType.FromId.Values.Where({$_.visible})
+            }
         }
     }
 }

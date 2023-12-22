@@ -17,6 +17,8 @@
         'Set-FreshAsset'
         'Get-FreshUser'
         #'Get-FreshTicket'
+        'Get-FreshAssetType'
+        'Get-FreshWorkspace'
         'Invoke-FreshRequest'
         'Add-FreshTask'
         'Get-FreshLocation'
