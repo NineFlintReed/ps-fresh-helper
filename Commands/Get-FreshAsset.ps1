@@ -44,8 +44,8 @@ function Get-FreshAsset {
             'AssetTag'  { $params.Body['filter'] = '"asset_tag:{0}"' -f "'$AssetTag'" }
             'User' {
                 $params.Body['filter'] = switch($User) {
-                    {$_ -as [Int64]}       { '"user_id:{0}"' -f (Get-FreshUser -User $_).id }
-                    {$_ -as [MailAddress]} { '"user_id:{0}"' -f (user_email_to_id $User)    }
+                    {$_ -as [Int64]}       { '"user_id:{0}"' -f $User                                 }
+                    {$_ -as [MailAddress]} { '"user_id:{0}"' -f (Get-FreshUser -User $_ -UseCache).id }
                 }   
             }
             'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"       }
