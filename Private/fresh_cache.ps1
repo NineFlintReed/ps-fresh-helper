@@ -11,6 +11,7 @@ Set-Variable -Name 'FreshCache' -Scope Global -Value ([PSCustomObject]@{
 
 
 # preloading some parts of the cache for use with autocomplete etc
+
 Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
 Select-Object -ExpandProperty 'asset_types' |
 ForEach-Object {
@@ -20,12 +21,15 @@ ForEach-Object {
 
 
 # utility methods for retrieving cached properties
+
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
     Param($user)
     $this.User.FromId[$user.id] = $user
     $this.User.FromMail[$user.primary_email] = $user
-} -PassThru |
+}
+
+$global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
     Param($user)
     if($user -as [Uint64]) {
@@ -33,7 +37,9 @@ Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
     } elseif($user -as [MailAddress]) {
         $this.User.FromMail[$user]
     }
-} -PassThru |
+}
+
+$global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'GetAssetType' -Value {
     Param($assettype)
     if($assettype -as [Uint64]) {
