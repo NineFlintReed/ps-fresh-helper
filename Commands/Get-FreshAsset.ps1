@@ -15,7 +15,7 @@ function Get-FreshAsset {
 
         [Alias('user_id')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='User',ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='User')]
         [String]$User,
 
         [ValidateNotNullOrEmpty()]
@@ -44,7 +44,7 @@ function Get-FreshAsset {
         'User' {
             $params.Body['filter'] = switch($User) {
                 {$_ -as [Int64]}       { '"user_id:{0}"' -f $User                                 }
-                {$_ -as [MailAddress]} { '"user_id:{0}"' -f (Get-FreshUser -User $_ -UseCache).id }
+                {$_ -as [MailAddress]} { '"user_id:{0}"' -f (Get-FreshUser -User $User -UseCache).id }
             }   
         }
         'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"       }
