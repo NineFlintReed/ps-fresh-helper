@@ -16,6 +16,31 @@ Set-Alias -Name fresh -Value Invoke-FreshRequest -Force
 
 
 
+Register-ArgumentCompleter -CommandName 'Get-FreshAsset' -ParameterName 'Workspace' -ScriptBlock {
+    Param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
+    $FreshCache.Workspace.FromName.Keys.Where({$_ -like "$WordToComplete*"}) |
+    ForEach-Object { "`'$_`'" }
+}
+
+Register-ArgumentCompleter -CommandName 'Get-FreshAsset' -ParameterName 'AssetType' -ScriptBlock {
+    Param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
+    $FreshCache.AssetType.FromName.GetEnumerator().Where({
+        $_.name -like "$WordToComplete*" -and $_.Value.visible -eq $true
+    }) |
+    ForEach-Object { "'$($_.name)'" }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
