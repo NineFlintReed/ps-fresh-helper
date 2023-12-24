@@ -35,7 +35,7 @@ function Initialize-FreshCache {
 
 $global:FreshCache |
 Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
-    Param([String]$user)
+    Param($user)
     $this.User.FromId[$user.id.ToString()] = $user
     $this.User.FromMail[$user.primary_email] = $user
 }
@@ -55,7 +55,7 @@ Add-Member -MemberType ScriptMethod -Name 'GetAssetType' -Value {
     Param([String]$assettype)
     if($assettype -as [Uint64]) {
         $this.AssetType.FromId[$assettype]
-    } elseif($user -as [String]) {
+    } elseif($assettype -as [String]) {
         $this.AssetType.FromName[$assettype]
     }
 }

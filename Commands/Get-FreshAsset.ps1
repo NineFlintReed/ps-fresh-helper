@@ -1,67 +1,76 @@
 function Get-FreshAsset {
-    [CmdletBinding(DefaultParameterSetName='All')]
+    [CmdletBinding(DefaultParameterSetName='List')]
     Param(
         [ValidateNotNullOrEmpty()]
-        [Parameter(Position=0,ParameterSetName='AssetTag')]
+        [Parameter(ParameterSetName='List')]
         [String]$AssetTag,
 
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='DisplayId')]
+        [Parameter(ParameterSetName='Single')]
         [String]$DisplayId,
         
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='AssetName')]
+        [Parameter(ParameterSetName='List')]
         [String]$AssetName,
 
-        [Alias('user_id')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='User')]
+        [Parameter(ParameterSetName='List')]
         [String]$User,
 
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='Search')]
+        [Parameter(ParameterSetName='List')]
         [String]$Search,
 
-        [Alias('location_id')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='Location')]
-        $Location,
+        [Parameter(ParameterSetName='List')]
+        [Uint64]$LocationId,
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName='List')]
+        [String]$AssetType,
 
         [Switch]$IncludeTypeFields,
 
-        [Int]$WorkspaceId
+        [String]$Workspace
     )
 
     $params = @{
         Method = 'GET'
-        Endpoint = "/api/v2/assets"
         Body = @{}
+        Endpoint = switch($PSCmdlet.ParameterSetName) {
+            'List'   { "/api/v2/assets"            }
+            'Single' { "/api/v2/assets/$DisplayId" }
+        }
     }
 
-    switch($PSCmdlet.ParameterSetName) {
-        'DisplayId' { $params.Endpoint += "/$DisplayId"                           }
-        'AssetTag'  { $params.Body['filter'] = '"asset_tag:{0}"' -f "'$AssetTag'" }
-        'User' {
-            $params.Body['filter'] = switch($User) {
-                {$_ -as [Int64]}       { '"user_id:{0}"' -f $User                                 }
-                {$_ -as [MailAddress]} { '"user_id:{0}"' -f (Get-FreshUser -User $User -UseCache).id }
-            }   
+    $filter_terms = switch($PSBoundParameters.Keys) {
+        'AssetTag'  { "asset_tag:'$AssetTag'" }
+        'AssetName' { "name:'$AssetName'" }
+        'Location'  { "location_id:$LocationId" }
+        'AssetType' {
+            "asset_type_id:{0}" -f (Get-FreshAssetType -AssetType $AssetType -IncludeHidden).id
         }
-        'AssetName' { $params.Body['filter'] = '"name:{0}"' -f "'$AssetName'"       }
-        'Location'  { $params.Body['filter'] = '"location_id:{0}"' -f "$Location" }
-        'Search'    { $params.Body['search'] = '"name:{0}"' -f "'$Search'"          }
-        'All'       { }
-        default { throw }
+        'User' {
+            switch($User) {
+                {$_ -as [UInt64]}       { "user_id:{0}" -f $User                                    }
+                {$_ -as [MailAddress]}  { "user_id:{0}" -f (Get-FreshUser -User $User -UseCache).id }            
+            }
+        }
+    }
+
+    if($filter_terms) {
+        $params.Body['filter'] = '"{0}"' -f ($filter_terms -join ' AND ')
     }
 
     if($IncludeTypeFields) {
         $params.Body['include'] = 'type_fields'
     }
-    if($PSBoundParameters.ContainsKey('WorkspaceId')) {
-        $params.Body['workspace_id'] = $WorkspaceId
+
+    if($PSBoundParameters.ContainsKey('Workspace')) {
+        $params.Body['workspace_id'] = (Get-FreshWorkspace -Workspace $Workspace).id
     }
 
+    Write-Debug "Get-FreshAsset: Fetching using filter: $($params.Body['filter'])"
     Invoke-FreshRequest @params |
     Select-Object -ExpandProperty 'asset*'
-
 }

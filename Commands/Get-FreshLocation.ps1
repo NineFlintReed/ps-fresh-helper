@@ -4,7 +4,7 @@ function Get-FreshLocation {
         [Alias('location_id')]
         [ValidateNotNullOrEmpty()]
         [Parameter(ParameterSetName='Location',ValueFromPipelineByPropertyName)]
-        [Int64]$Location,
+        [UInt64]$Location,
 
         [Parameter(ParameterSetName='Location')]
         [Switch]$IncludeChildren,

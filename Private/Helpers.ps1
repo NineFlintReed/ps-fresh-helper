@@ -49,6 +49,7 @@ function params_to_query_string {
 
 
 function fresh_get {
+    [CmdletBinding()]
     Param(
         $Endpoint,
         $Body
