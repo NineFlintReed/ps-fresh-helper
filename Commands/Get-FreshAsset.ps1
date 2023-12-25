@@ -29,9 +29,11 @@ function Get-FreshAsset {
         [Parameter(ParameterSetName='List')]
         [String]$AssetType,
 
-        [Switch]$IncludeTypeFields,
+        [ValidateNotNullOrEmpty()]
+        [String]$Workspace,
 
-        [String]$Workspace
+        [Switch]$IncludeTypeFields
+
     )
 
     $params = @{
