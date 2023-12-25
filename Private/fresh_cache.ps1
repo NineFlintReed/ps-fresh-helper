@@ -13,23 +13,6 @@ Set-Variable -Name 'FreshCache' -Scope Global -Value ([PSCustomObject]@{
     }
 })
 
-# preloading some parts of the cache for use with autocomplete etc
-function Initialize-FreshCache {
-    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
-    Select-Object -ExpandProperty 'asset_types' |
-    ForEach-Object {
-        $FreshCache.AssetType.FromId[$_.id.ToString()] = $_
-        $FreshCache.AssetType.FromName[$_.name.ToString()] = $_
-    }
-    
-    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/workspaces" |
-    Select-Object -ExpandProperty 'workspaces' |
-    ForEach-Object {
-        $FreshCache.Workspace.FromId[$_.id.ToString()] = $_
-        $FreshCache.Workspace.FromName[$_.name.ToString()] = $_
-    }
-}
-
 
 # utility methods for retrieving cached properties
 
@@ -67,5 +50,23 @@ Add-Member -MemberType ScriptMethod -Name 'GetWorkspace' -Value {
         $this.Workspace.FromId[$workspace]
     } elseif($workspace -as [String]) {
         $this.Workspace.FromName[$workspace]
+    }
+}
+
+
+# preloading some parts of the cache for use with autocomplete etc
+function Initialize-FreshCache {
+    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
+    Select-Object -ExpandProperty 'asset_types' |
+    ForEach-Object {
+        $FreshCache.AssetType.FromId[$_.id.ToString()] = $_
+        $FreshCache.AssetType.FromName[$_.name.ToString()] = $_
+    }
+    
+    Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/workspaces" |
+    Select-Object -ExpandProperty 'workspaces' |
+    ForEach-Object {
+        $FreshCache.Workspace.FromId[$_.id.ToString()] = $_
+        $FreshCache.Workspace.FromName[$_.name.ToString()] = $_
     }
 }

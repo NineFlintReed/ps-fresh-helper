@@ -2,12 +2,12 @@ function Get-FreshAsset {
     [CmdletBinding(DefaultParameterSetName='List')]
     Param(
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName='List')]
-        [String]$AssetTag,
-
-        [ValidateNotNullOrEmpty()]
         [Parameter(ParameterSetName='Single')]
         [String]$DisplayId,
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName='List')]
+        [String]$AssetTag,
         
         [ValidateNotNullOrEmpty()]
         [Parameter(ParameterSetName='List')]
@@ -64,6 +64,10 @@ function Get-FreshAsset {
 
     if($IncludeTypeFields) {
         $params.Body['include'] = 'type_fields'
+    }
+
+    if($PSBoundParameters.ContainsKey('Search')) {
+        $params.Body['search'] = '"name:{0}"' -f "'$Search'"
     }
 
     if($PSBoundParameters.ContainsKey('Workspace')) {
