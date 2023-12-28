@@ -16,11 +16,10 @@ Set-Variable -Name 'FreshCache' -Scope Global -Value ([PSCustomObject]@{
 
 # utility methods for retrieving cached properties
 
-$global:FreshCache |
-Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
-    Param($user)
-    $this.User.FromId[$user.id.ToString()] = $user
-    $this.User.FromMail[$user.primary_email] = $user
+function add_user_cached {
+    Param($userobj)
+    $FreshCache.User.FromId[$userobj.id.ToString()] = $userobj
+    $FreshCache.User.FromMail[$userobj.primary_email] = $userobj
 }
 
 function get_user_cached {
