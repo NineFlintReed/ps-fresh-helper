@@ -8,7 +8,7 @@ function Get-FreshUser_ViaId {
         }
     }
     $result = (Invoke-FreshRequest @params).requester
-    $FreshCache.AddUser($result)
+    add_user_cached $result
     $result
 }
 
@@ -27,7 +27,7 @@ function Get-FreshUser_ViaEmail {
     if(-not $result) {
         Write-Error -Message "User email '$email' not found." -ErrorAction 'Stop' -Category ObjectNotFound
     }
-    $FreshCache.AddUser($result)
+    add_user_cached $result
     $result
 }
 
@@ -44,7 +44,7 @@ function Get-FreshUser_All {
     Invoke-FreshRequest @params |
     Select-Object -ExpandProperty requesters |
     ForEach-Object {
-        $FreshCache.AddUser($_)
+        add_user_cached $_
         $_
     }
 }
@@ -66,7 +66,7 @@ function Get-FreshUser_Search {
     Invoke-FreshRequest @params |
     Select-Object -ExpandProperty requesters |
     ForEach-Object {
-        $FreshCache.AddUser($_)
+        add_user_cached $_
         $_
     }
 }
@@ -89,8 +89,8 @@ function Get-FreshUser {
     
     switch($PSCmdlet.ParameterSetName) {
         'User' {
-            if($UseCache -and $FreshCache.GetUser($User)) {
-                $FreshCache.GetUser($User)
+            if($UseCache -and (get_user_cached $user)) {
+                get_user_cached $user
             } else {
                 switch($User) {
                     {$_ -as [Uint64]} {

@@ -23,38 +23,38 @@ Add-Member -MemberType ScriptMethod -Name 'AddUser' -Value {
     $this.User.FromMail[$user.primary_email] = $user
 }
 
-$global:FreshCache |
-Add-Member -MemberType ScriptMethod -Name 'GetUser' -Value {
-    Param([String]$user)
-    if($user -as [Uint64]) {
-        $this.User.FromId[$user]
-    } elseif($user -as [MailAddress]) {
-        $this.User.FromMail[$user]
+function get_user_cached {
+    Param([String]$key = '')
+    if([regex]::Match($key,'^\d+$').Success) {
+        $FreshCache.User.FromId[$key]
+    } elseif([mailaddress]::TryCreate($key, [ref]$null)) {
+        $FreshCache.User.FromMail[$key]
+    } else {
+        throw "Key '$key' must either be a positive integer or email address"
     }
 }
 
-$global:FreshCache |
-Add-Member -MemberType ScriptMethod -Name 'GetAssetType' -Value {
-    Param([String]$assettype)
-    if($assettype -as [Uint64]) {
-        $this.AssetType.FromId[$assettype]
-    } elseif($assettype -as [String]) {
-        $this.AssetType.FromName[$assettype]
+function get_workspace_cached {
+    Param([String]$key = '')
+    if([regex]::Match($key,'^\d+$').Success) {
+        $FreshCache.Workspace.FromId[$key]
+    } else {
+        $FreshCache.Workspace.FromName[$key]
     }
 }
 
-$global:FreshCache |
-Add-Member -MemberType ScriptMethod -Name 'GetWorkspace' -Value {
-    Param([String]$workspace)
-    if($workspace -as [Uint64]) {
-        $this.Workspace.FromId[$workspace]
-    } elseif($workspace -as [String]) {
-        $this.Workspace.FromName[$workspace]
+function get_assettype_cached {
+    Param([String]$key = '')
+    if([regex]::Match($key,'^\d+$').Success) {
+        $FreshCache.AssetType.FromId[$key]
+    } else {
+        $FreshCache.AssetType.FromName[$key]
     }
 }
 
 
-# preloading some parts of the cache for use with autocomplete etc
+# preloading some parts of the cache for use with autocompletion and the ability
+# to specify a name/other identifier in place of a numeric ID
 function Initialize-FreshCache {
     Invoke-FreshRequest -Method 'GET' -Endpoint "/api/v2/asset_types" |
     Select-Object -ExpandProperty 'asset_types' |
