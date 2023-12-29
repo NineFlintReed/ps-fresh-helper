@@ -77,7 +77,7 @@ function Get-FreshUser {
     Param(
         [ValidateNotNullOrEmpty()]
         [Parameter(Position=0,ParameterSetName='User')]
-        $User,
+        [String]$User,
 
         [Parameter(ParameterSetName='User')]
         [Switch]$UseCache,
@@ -93,10 +93,10 @@ function Get-FreshUser {
                 get_user_cached $user
             } else {
                 switch($User) {
-                    {$_ -as [Uint64]} {
+                    {$_ -match '^\d+$'} {
                         Get-FreshUser_ViaId $User
                     }
-                    {$_ -as [MailAddress]} {
+                    {[MailAddress]::TryCreate($_, [ref]$null)} {
                         Get-FreshUser_ViaEmail $User
                     }
                     default {
