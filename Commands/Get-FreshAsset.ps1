@@ -54,8 +54,12 @@ function Get-FreshAsset {
         }
         'User' {
             switch($User) {
-                {$_ -as [UInt64]}       { "user_id:{0}" -f $User                                    }
-                {$_ -as [MailAddress]}  { "user_id:{0}" -f (Get-FreshUser -User $User -UseCache).id }            
+                {$_ -match '^\d+$'} {
+                    "user_id:{0}" -f $User
+                }
+                {[MailAddress]::TryCreate($_, [ref]$null)} {
+                    "user_id:{0}" -f (Get-FreshUser -User $User -UseCache).id
+                }
             }
         }
     }
