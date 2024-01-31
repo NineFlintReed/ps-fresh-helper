@@ -41,7 +41,10 @@ function Get-FreshUser_All {
             per_page = 100
         }
     }
-    Invoke-FreshRequest @params |
+    Invoke-FreshRequest @params |%{
+        write-host ((($_|gm | select -exp name) -join ','))
+        $_
+    } |
     Select-Object -ExpandProperty requesters |
     ForEach-Object {
         add_user_cached $_

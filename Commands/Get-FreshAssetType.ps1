@@ -11,7 +11,7 @@ function Get-FreshAssetType {
 
     switch($PSCmdlet.ParameterSetName) {
         'Single' {
-            $result = $FreshCache.GetAssetType($AssetType)
+            $result = get_assettype_cached "$AssetType"
             if(-not $result) {
                 Write-Error "Asset type '$AssetType' not found" -ErrorAction Stop -Category ObjectNotFound
             } else {

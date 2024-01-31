@@ -9,7 +9,7 @@ function Get-FreshWorkspace {
 
     switch($PSCmdlet.ParameterSetName) {
         'Single' {
-            $result = $FreshCache.GetWorkspace("$Workspace")
+            $result = get_workspace_cached "$Workspace"
             if(-not $result) {
                 Write-Error "Workspace '$Workspace' not found" -ErrorAction Stop -Category ObjectNotFound
             } else {
