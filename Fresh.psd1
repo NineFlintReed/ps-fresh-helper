@@ -17,6 +17,7 @@
         'Set-FreshAsset'
         'Get-FreshUser'
         'New-FreshTicket'
+        'Add-FreshTicketNote'
         #'Get-FreshTicket'
         'Get-FreshAssetType'
         'Get-FreshWorkspace'
