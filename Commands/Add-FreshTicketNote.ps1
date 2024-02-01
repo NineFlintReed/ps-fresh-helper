@@ -18,7 +18,7 @@ function Add-FreshTicketNote {
         Body = @{ body = $NoteHTMLContent }
     }
     if($Public) {
-        $params['private'] = $false
+        $params.Body['private'] = $false
     }
 
     $result = Invoke-FreshRequest @params
