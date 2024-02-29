@@ -49,7 +49,7 @@ function Set-FreshAsset {
 
         if($PSBoundParameters.ContainsKey('User')) {
             $params.Body['user_id'] = switch($User) {
-                {$_ -as [Uint64]}      { $User                          }
+                {$_ -as [Uint64]}      { [Uint64]$User                  }
                 {$_ -as [MailAddress]} { (Get-FreshUser -User $User).id }
             }
         }
