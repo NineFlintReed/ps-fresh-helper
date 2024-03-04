@@ -30,7 +30,13 @@ Register-ArgumentCompleter -CommandName 'Get-FreshAsset' -ParameterName 'AssetTy
     ForEach-Object { "'$($_.name)'" }
 }
 
-
+Register-ArgumentCompleter -CommandName 'Get-FreshProduct' -ParameterName 'Product' -ScriptBlock {
+    Param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
+    $FreshCache.Product.FromName.GetEnumerator().Where({
+        $_.name -like "$WordToComplete*"
+    }) |
+    ForEach-Object { "'$($_.name)'" }
+}
 
 
 
