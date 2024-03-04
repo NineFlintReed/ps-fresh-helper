@@ -20,6 +20,7 @@
         'Add-FreshTicketNote'
         #'Get-FreshTicket'
         'Get-FreshAssetType'
+        'Get-FreshProduct'
         'Get-FreshWorkspace'
         'Invoke-FreshRequest'
         'Add-FreshTask'
